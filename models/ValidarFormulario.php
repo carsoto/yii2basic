@@ -5,7 +5,7 @@ use Yii;
 use yii\base\model;
 
 
-class ValidarFormulario extends models {
+class ValidarFormulario extends model {
     public $nombre;
     public $email;
 
