@@ -120,4 +120,72 @@ class AlumnosController extends Controller
             return $this->redirect(["view"]);
         }
     }
+
+    public function actionUpdate()
+    {
+        $model = new FormAlumnos;
+        $msg = null;
+        
+        if($model->load(Yii::$app->request->post()))
+        {
+            if($model->validate())
+            {
+                $table = Alumnos::findOne($model->id_alumno);
+                if($table)
+                {
+                    $table->nombre = $model->nombre;
+                    $table->apellidos = $model->apellidos;
+                    $table->clase = $model->clase;
+                    $table->nota_final = $model->nota_final;
+                    if ($table->update())
+                    {
+                        $msg = "El Alumno ha sido actualizado correctamente";
+                    }
+                    else
+                    {
+                        $msg = "El Alumno no ha podido ser actualizado";
+                    }
+                }
+                else
+                {
+                    $msg = "El alumno seleccionado no ha sido encontrado";
+                }
+            }
+            else
+            {
+                $model->getErrors();
+            }
+        }
+        
+        
+        if (Yii::$app->request->get("id_alumno"))
+        {
+            $id_alumno = Html::encode($_GET["id_alumno"]);
+            if ((int) $id_alumno)
+            {
+                $table = Alumnos::findOne($id_alumno);
+                if($table)
+                {
+                    $model->id_alumno = $table->id_alumno;
+                    $model->nombre = $table->nombre;
+                    $model->apellidos = $table->apellidos;
+                    $model->clase = $table->clase;
+                    $model->nota_final = $table->nota_final;
+                }
+                else
+                {
+                    return $this->redirect(["view"]);
+                }
+            }
+            else
+            {
+                return $this->redirect(["view"]);
+            }
+        }
+        else
+        {
+            return $this->redirect(["view"]);
+        }
+        return $this->render("update", ["model" => $model, "msg" => $msg]);
+    }
 }
