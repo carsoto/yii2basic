@@ -8,6 +8,7 @@ use app\models\FormAlumnos;
 use app\models\Alumnos;
 use app\models\FormSearch;
 use yii\helpers\Html;
+use yii\data\Pagination;
 
 class AlumnosController extends Controller
 {    
@@ -47,9 +48,6 @@ class AlumnosController extends Controller
 
     public function actionView()
     {
-        $table = new Alumnos;
-        $model = $table->find()->all();
-        
         $form = new FormSearch;
         $search = null;
         if($form->load(Yii::$app->request->get()))
@@ -57,15 +55,38 @@ class AlumnosController extends Controller
             if ($form->validate())
             {
                 $search = Html::encode($form->q);
-                $query = "SELECT * FROM alumnos WHERE id_alumno LIKE '%$search%' OR ";
-                $query .= "nombre LIKE '%$search%' OR apellidos LIKE '%$search%'";
-                $model = $table->findBySql($query)->all();
+                $table = Alumnos::find()
+                        ->where(["like", "id_alumno", $search])
+                        ->orWhere(["like", "nombre", $search])
+                        ->orWhere(["like", "apellidos", $search]);
+                $count = clone $table;
+                $pages = new Pagination([
+                    "pageSize" => 1,
+                    "totalCount" => $count->count()
+                ]);
+                $model = $table
+                        ->offset($pages->offset)
+                        ->limit($pages->limit)
+                        ->all();
             }
             else
             {
                 $form->getErrors();
             }
         }
-        return $this->render("view", ["model" => $model, "form" => $form, "search" => $search]);
+        else
+        {
+            $table = Alumnos::find();
+            $count = clone $table;
+            $pages = new Pagination([
+                "pageSize" => 1,
+                "totalCount" => $count->count(),
+            ]);
+            $model = $table
+                    ->offset($pages->offset)
+                    ->limit($pages->limit)
+                    ->all();
+        }
+        return $this->render("view", ["model" => $model, "form" => $form, "search" => $search, "pages" => $pages]);
     }
 }
