@@ -1,8 +1,31 @@
 <?php
+
 use yii\helpers\Url;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
 ?>
 
 <a href="<?= Url::toRoute("alumnos/create") ?>">Crear un nuevo alumno</a>
+<br><br>
+
+<?php $f = ActiveForm::begin([
+    "method" => "get",
+    "action" => Url::toRoute("alumnos/view"),
+    "enableClientValidation" => true,
+]);
+?>
+
+<br><br>
+<div class="form-group">
+    <?= $f->field($form, "q")->input("search") ?>
+</div>
+
+<?= Html::submitButton("Buscar", ["class" => "btn btn-primary"]) ?>
+
+<?php $f->end() ?>
+
+<h3><?= $search ?></h3>
 
 <h3>Lista de alumnos</h3>
 <table class="table table-bordered">
