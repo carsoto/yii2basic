@@ -313,4 +313,11 @@ class UsersController extends Controller
         return $this->render("resetpass", ["model" => $model, "msg" => $msg]);
     }
 
+    public function actionUseradmin(){
+        return $this->render("useradmin");
+    }
+
+    public function actionUsersimple(){
+        return $this->render("usersimple");
+    }    
 }

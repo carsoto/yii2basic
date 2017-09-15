@@ -12,6 +12,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public $accessToken;
     public $activate;
     public $verification_code;
+    public $role;
 
     /**
      * @inheritdoc
@@ -118,6 +119,29 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
         if (crypt($password, $this->password) == $this->password)
         {
             return $password === $password;
+        }
+    }
+
+    public static function isUserAdmin($id)
+    {
+        if (Users::findOne(['id' => $id, 'activate' => '1', 'role' => 2])){
+            return true;
+        } 
+
+        else {
+            return false;
+        }
+
+    }
+
+    public static function isUserSimple($id)
+    {
+        if (Users::findOne(['id' => $id, 'activate' => '1', 'role' => 1])){
+            return true;
+        } 
+
+        else {
+            return false;
         }
     }
 }
